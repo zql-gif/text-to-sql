@@ -130,11 +130,3 @@ exact match          0.444                0.245                0.000            
 
 每一条测试样例运行结果
 对应的原始测试数据信息
-
-
-python - m  
-Spider1_LLM_Baseline.chatgpt_text_to_sql - -test_num  
-150 - -model  
-"gpt-4o-mini" - -temperature  
-0.0 - -"llm_key" ${your_api_key}  
-"""

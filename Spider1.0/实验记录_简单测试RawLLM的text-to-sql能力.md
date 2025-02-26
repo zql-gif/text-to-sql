@@ -131,11 +131,7 @@ exact match          0.444                0.245                0.000            
 每一条测试样例运行结果
 对应的原始测试数据信息
 
-"""  
-  
-gpt_4_llm_key = "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"  
-chatgpt_text_to_sql_process(150, "glm-4-plus", 0.0, gpt_4_llm_key)  
-"""  
+
 python - m  
 Spider1_LLM_Baseline.chatgpt_text_to_sql - -test_num  
 150 - -model  

@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Records/2025.02.24 - 2025.03.02.md",
+                "file": "Spider1.0/实验记录_简单测试RawLLM的text-to-sql能力.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "2025.02.24 - 2025.03.02"
+              "title": "实验记录_简单测试RawLLM的text-to-sql能力"
             }
           }
         ],
@@ -181,10 +181,10 @@
   },
   "active": "df683454b5739675",
   "lastOpenFiles": [
+    "Records/2025.02.24 - 2025.03.02.md",
     "Spider1.0/实验记录_简单测试RawLLM的text-to-sql能力.md",
     "论文笔记/Text-To-SQL Dataset.md",
     "Spider1.0/Spider1.0_数据集说明.md",
-    "Records/2025.02.24 - 2025.03.02.md",
     "论文笔记/Template-based text-to-sql or sql-to-text.md",
     "text-to-sql",
     "Text-To-SQL Dataset.md",

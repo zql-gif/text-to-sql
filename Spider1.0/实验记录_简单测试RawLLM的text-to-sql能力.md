@@ -1,7 +1,6 @@
 ### Spider1.0
 关于Spider1.0数据集的介绍，参考 [spider/README.md at master · taoyds/spider](https://github.com/taoyds/spider/blob/master/README.md)
 本项目下的文件夹 `spider_data` 下载于链接 [spider_data.zip - Google 云端硬盘](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view)
-
 ### preparation
 Spider1.0的数据集spider_data包含的数据库文件比较大，不便上传到github，所以请先在下面链接下载spider_data.zip文件并解压到本项目目录下： [spider_data.zip - Google 云端硬盘](https://drive.google.com/file/d/1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J/view)
 ### setup
@@ -73,15 +72,15 @@ cd <project_directory>
 ```
 
 ``` shell
-python evaluation.py --model "gpt-4o-mini" --gold "Output/gpt-4o-mini/gold.txt" --pred "Output/gpt-4o-mini/predict.txt" --acc "Output/gpt-4o-mini/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
+python evaluation.py --model "gpt-4o-mini" --exp_id "1.0" --gold "Output/gpt-4o-mini_1.0/gold.txt" --pred "Output/gpt-4o-mini_1.0/predict.txt" --acc "Output/gpt-4o-mini_1.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
 ```
 
 ``` shell
-python evaluation.py --model "gpt-4-turbo" --gold "Output/gpt-4-turbo/gold.txt" --pred "Output/gpt-4-turbo/predict.txt" --acc "Output/gpt-4-turbo/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
+python evaluation.py --model "gpt-4-turbo" --exp_id "1.0" --gold "Output/gpt-4-turbo_1.0/gold.txt" --pred "Output/gpt-4-turbo_1.0/predict.txt" --acc "Output/gpt-4-turbo_1.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
 ```
 
 ``` shell
-python evaluation.py --model "glm-4-plus" --gold "Output/gpt-4o-mini/gold.txt" --pred "Output/glm-4-plus/predict.txt" --acc "Output/glm-4-plus/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
+python evaluation.py --model "glm-4-plus" --exp_id "1.0" --gold "Output/gpt-4o-mini_1.0/gold.txt" --pred "Output/glm-4-plus_1.0/predict.txt" --acc "Output/glm-4-plus_1.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
 ```
 
 上述指令的输出结果存储于文件夹`Output`的`model_name`子文件夹中，如下：
@@ -125,8 +124,3 @@ exact match          0.444                0.245                0.000            
 * 直接使用上面这种prompt，database schema信息较长，很容易超过问题的上下文限制（8000+，4000+）
 * 各难度测试样例的平均execution success 比例，最佳情况下也只有30%左右
 
-
-
-
-每一条测试样例运行结果
-对应的原始测试数据信息

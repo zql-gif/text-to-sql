@@ -4,6 +4,9 @@
 * DAIL-SQL code：[BeachWang/DAIL-SQL: A efficient and effective few-shot NL2SQL method on GPT-4.](https://github.com/BeachWang/DAIL-SQL)
 
 ### setup
+
+#### 环境
+见github项目中的requirements.txt
 #### gpt-3.5-turbo_2.0
 1. 测试数据取自`spider_data`中的测试文件test.json ,  对应的database schema文件test_tables.json以及test_gold.sql
 2. input : Spider1.0数据集的测试文件test.json ,  以及对应的database schema文件test_tables.json

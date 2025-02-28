@@ -7,6 +7,10 @@
 
 #### 环境
 见github项目中的requirements.txt
+
+#### spider_data数据集下载
+[Spider1.0_数据集说明](../Spider1.0/Spider1.0_数据集说明.md)
+
 #### gpt-3.5-turbo_2.0
 1. 测试数据取自`spider_data`中的测试文件test.json ,  对应的database schema文件test_tables.json以及test_gold.sql
 2. input : Spider1.0数据集的测试文件test.json ,  以及对应的database schema文件test_tables.json

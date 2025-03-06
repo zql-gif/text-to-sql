@@ -50,7 +50,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -194,10 +194,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "7c29f1d5c1088a7e",
+  "active": "77a2469ce7f0984e",
   "lastOpenFiles": [
-    "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
     "Spider1.0/实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0.md",
+    "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
     "BIRD/BIRD_数据集说明.md",
     "BIRD/BIRD_README.md",
     "Records/2025.02.24 - 2025.03.09.md",

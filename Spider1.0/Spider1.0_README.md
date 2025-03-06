@@ -256,10 +256,10 @@ arguments:
 ---
 - train_spider.json  : 训练数据集，列表形式存储text-to-sql对儿
 	* Training Examples: 7000  
-	* Databases:       140  （均被database/和test_database/ 分别包含）
+	* Databases:       140  （均被database/和test_database/ 分别包含，评估时用哪个都成）
 - train_others.json  ：训练数据集，列表形式存储text-to-sql对儿
     * Training Examples: 1659  
-    * Databases:       6  （均被database/和test_database/ 分别包含）
+    * Databases:       6  （均被database/和test_database/ 分别包含，评估时用哪个都成）
 - train_gold.sql  （7000+1659=8659）：合并了train_spider.json和train_others.json，训练数据集，行形式存储所有的text-to-sql对儿中的标准答案sql语句
 ---
 - README.txt  ：解释说明

@@ -12,24 +12,32 @@
 [Spider1.0_数据集说明](../Spider1.0/Spider1.0_数据集说明.md)
 
 #### gpt-3.5-turbo_2.0
-1. 测试数据取自`spider_data`中的测试文件test.json ,  对应的database schema文件test_tables.json以及test_gold.sql
-2. input : Spider1.0数据集的测试文件test.json ,  以及对应的database schema文件test_tables.json
+1. 测试数据取自`spider_data`中的测试文件test.json 的2147条,  对应的database schema文件test_tables.json以及test_gold.sql
+2. input : Spider1.0数据集的测试文件 ,  以及对应的database schema文件tables.json
 3. output : 生成的sql文件 "predict.txt" ，llm的生成结果和代价的记录文件predict.jsonl
 4. llm setup 
 * model = "gpt-3.5-turbo"
 * temperature = 0.0
-* 测试数目：1000条
+* 测试数目：2147条
 
-#### glm-4-plus_2.0
-1. 测试数据取自`spider_data`中的测试文件test.json ,  对应的database schema文件test_tables.json以及test_gold.sql
-2. input : Spider1.0数据集的测试文件test.json ,  以及对应的database schema文件test_tables.json
+#### gpt-3.5-turbo_3.0
+1. 测试数据取自`spider_data`中的测试文件train_spider.json 的3000条,  对应的database schema文件train_tables.json以及train_gold.sql
+2. input : Spider1.0数据集的测试文件 ,  以及对应的database schema文件tables.json
+3. output : 生成的sql文件 "predict.txt" ，llm的生成结果和代价的记录文件predict.jsonl
+4. llm setup 
+* model = "gpt-3.5-turbo"
+* temperature = 0.0
+* 测试数目：3000条
+#### ~~glm-4-plus_2.0~~
+1. 测试数据取自`spider_data`中的测试文件test.json 的2147条,  对应的database schema文件test_tables.json以及test_gold.sql（外加train.json的3000条）
+2. input : Spider1.0数据集的测试文件 ,  以及对应的database schema文件tables.json
 3. output : 生成的sql文件 "predict.txt" ，llm的生成结果和代价的记录文件predict.jsonl
 4. llm setup 
 * model = “glm-4-plus"
 * temperature = 0.0
-* 测试数目：1000条
+* 测试数目：5000条
 
-#### Deepseek
+#### ~~Deepseek~~
 * 不想花自己的钱，所以暂且搁置
 
 
@@ -74,6 +82,12 @@ cd <project_directory>
 gpt-3.5-turbo_2.0：
 ``` shell
 python -m Spider1_LLM_Baseline.chatgpt_text_to_sql --gold_input_json "spider_data/test.json" --gold_tables_json "spider_data/test_tables.json" --test_num 1000 --model "gpt-3.5-turbo" --exp_id "2.0" --temperature 0.0 --llm_key ${your_api_key}
+```
+
+gpt-3.5-turbo_3.0：
+
+``` shell
+python -m Spider1_LLM_Baseline.chatgpt_text_to_sql --gold_input_json "spider_data/train_spider.json" --gold_tables_json "spider_data/test_tables.json" --test_num 1000 --model "gpt-3.5-turbo" --exp_id "3.0" --temperature 0.0 --llm_key ${your_api_key}
 ```
 
 glm-4-plus_2.0:
@@ -129,39 +143,22 @@ gpt-3.5-turbo_2.0：
 ``` shell
 python evaluation.py --model "gpt-3.5-turbo" --exp_id "2.0" --gold "Output/gpt-3.5-turbo_2.0/gold.txt" --pred "Output/gpt-3.5-turbo_2.0/predict.txt" --acc "Output/gpt-3.5-turbo_2.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
 ```
+gpt-3.5-turbo_3.0：
+``` shell
+python evaluation.py --model "gpt-3.5-turbo" --exp_id "3.0" --gold "Output/gpt-3.5-turbo_3.0/gold.txt" --pred "Output/gpt-3.5-turbo_3.0/predict.txt" --acc "Output/gpt-3.5-turbo_3.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
+```
 
 glm-4-plus_2.0:
 ``` shell
 python evaluation.py --model "glm-4-plus" --exp_id "2.0" --gold "Output/glm-4-plus_2.0/gold.txt" --pred "Output/glm-4-plus_2.0/predict.txt" --acc "Output/glm-4-plus_2.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
 ```
 
-
 上述指令的输出结果存储于文件夹`Output`的`model_name`子文件夹中，如下：
 * eval_result.txt : 指定测试个数的sqls的text-to-sql任务评估结果
 * merged_info.jsonl：上面的评估信息的汇总，格式见本节的”评估信息“
 
 ### results
-#### gpt-3.5-turbo_2.0
-```
-                     easy                 medium               hard                 extra                all                   
-count                225                  384                  226                  165                  1000                  
-=====================   EXECUTION ACCURACY     =====================  
-execution            0.920                0.771                0.637                0.612                0.748                 
-  
-====================== EXACT MATCHING ACCURACY =====================  
-exact match          0.747                0.388                0.212                0.091                0.380
-```
-
-#### glm-4-plus_2.0
-```
-                     easy                 medium               hard                 extra                all                   
-count                225                  384                  226                  165                  1000                  
-=====================   EXECUTION ACCURACY     =====================  
-execution            0.920                0.820                0.668                0.648                0.780                 
-  
-====================== EXACT MATCHING ACCURACY =====================  
-exact match          0.818                0.375                0.181                0.085                0.383
-```
+见eval_result.txt文件
 
 
 

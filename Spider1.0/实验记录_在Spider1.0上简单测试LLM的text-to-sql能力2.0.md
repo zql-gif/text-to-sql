@@ -160,7 +160,11 @@ python evaluation.py --model "glm-4-plus" --exp_id "2.0" --gold "Output/glm-4-pl
 ### results
 见eval_result.txt文件
 
-
+```txt
+{'sqlite3.OperationalError': 261, 'sqlalchemy.exc.InvalidRequestError': 1}
+SyntaxErrorPercent:0.05090343889644453(262/5147)
+SemanticErrorPercent:0.21021954536623275(1082/5147)
+```
 
 
 

@@ -196,8 +196,9 @@
   },
   "active": "7c29f1d5c1088a7e",
   "lastOpenFiles": [
-    "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
+    "attachment/error_category.png",
     "Spider1.0/实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0.md",
+    "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
     "BIRD/BIRD_数据集说明.md",
     "BIRD/BIRD_README.md",
     "Records/2025.02.24 - 2025.03.09.md",
@@ -231,7 +232,6 @@
     "Records/2024.12.30 - 2025.01.12.md",
     "DuSQL_A Large Scale and Pragmatic Chinese Text to SQL Dataset.md",
     "论文笔记/DuSQL_A Large Scale and Pragmatic Chinese Text to SQL Dataset.md",
-    "ChatGpt_Spider.md",
     "hhh",
     "Spider2.0",
     "MetamorphicTesting",
@@ -240,7 +240,6 @@
     "attachment/sql_graph_example_2.png",
     "attachment/example_labels_for_template_construction.png",
     "attachment/spj_query_graph_labeled.png",
-    "attachment/Pasted image 20241216111154.png",
-    "attachment/spj_query_graph_2.png"
+    "attachment/Pasted image 20241216111154.png"
   ]
 }

@@ -49,7 +49,8 @@
               "title": "实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -192,10 +193,10 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "df683454b5739675",
+  "active": "7c29f1d5c1088a7e",
   "lastOpenFiles": [
-    "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误.md",
     "Records/2025.03.10 - 2025.03.16.md",
+    "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误.md",
     "Spider1.0/实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0.md",
     "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
     "MetamorphicTesting/MetamorphicTestingDefinition.md",

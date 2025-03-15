@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Spider1.0/Spider1.0_数据集说明.md",
+                "file": "Records/2025.03.10 - 2025.03.16.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Spider1.0_数据集说明"
+              "title": "2025.03.10 - 2025.03.16"
             }
           },
           {
@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Spider1.0/实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0.md",
+                "file": "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0"
+              "title": "标记记录_分析Spider1.0上text-to-sql任务的逻辑错误"
             }
           },
           {
@@ -106,8 +106,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 346.5040512084961,
-    "collapsed": true
+    "width": 346.5040512084961
   },
   "right": {
     "id": "e58ca7b091f3b509",
@@ -195,14 +194,18 @@
   },
   "active": "df683454b5739675",
   "lastOpenFiles": [
-    "Spider1.0/Spider1.0_README.md",
-    "Spider1.0/Spider1.0_数据集说明.md",
-    "Records/2025.02.24 - 2025.03.09.md",
+    "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误.md",
+    "Records/2025.03.10 - 2025.03.16.md",
     "Spider1.0/实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0.md",
-    "BIRD/BIRD_README.md",
-    "attachment/error_category.png",
     "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
+    "MetamorphicTesting/MetamorphicTestingDefinition.md",
+    "44.md",
     "BIRD/BIRD_数据集说明.md",
+    "BIRD/BIRD_README.md",
+    "Records/2025.02.24 - 2025.03.09.md",
+    "Spider1.0/Spider1.0_数据集说明.md",
+    "Spider1.0/Spider1.0_README.md",
+    "attachment/error_category.png",
     "Spider1.0/实验记录_简单测试RawLLM的text-to-sql能力.md",
     "BIRD/README.md",
     "BIRD/BIRD论文.md",
@@ -228,9 +231,6 @@
     "text-to-sql",
     "Text-To-SQL Dataset.md",
     "Template-based text-to-sql or sql-to-text.md",
-    "Records/2024.12.30 - 2025.01.12.md",
-    "DuSQL_A Large Scale and Pragmatic Chinese Text to SQL Dataset.md",
-    "论文笔记/DuSQL_A Large Scale and Pragmatic Chinese Text to SQL Dataset.md",
     "hhh",
     "Spider2.0",
     "MetamorphicTesting",

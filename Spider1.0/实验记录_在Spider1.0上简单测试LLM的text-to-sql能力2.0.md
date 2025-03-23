@@ -148,6 +148,10 @@ gpt-3.5-turbo_3.0：
 python evaluation.py --model "gpt-3.5-turbo" --exp_id "3.0" --gold "Output/gpt-3.5-turbo_3.0/gold.txt" --pred "Output/gpt-3.5-turbo_3.0/predict.txt" --acc "Output/gpt-3.5-turbo_3.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
 ```
 
+```
+python evaluation.py --model "gpt-3.5-turbo" --exp_id "4.0" --gold "Output/gpt-3.5-turbo_4.0/gold.txt" --pred "Output/gpt-3.5-turbo_4.0/predict.txt" --acc "Output/gpt-3.5-turbo_4.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"
+```
+
 glm-4-plus_2.0:
 ``` shell
 python evaluation.py --model "glm-4-plus" --exp_id "2.0" --gold "Output/glm-4-plus_2.0/gold.txt" --pred "Output/glm-4-plus_2.0/predict.txt" --acc "Output/glm-4-plus_2.0/eval_result.txt" --db "spider_data/test_database" --etype "all" --table "spider_data/test_tables.json"

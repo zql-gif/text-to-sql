@@ -3,16 +3,170 @@
 * 人工分析error type和root cause，表象可能是用错某个函数，根本原因是LLM对某个操作理解不当。总结出一系列error type和root cause。
 	* 人工标注gpt-3.5-turbo_3.0：spider-train-merged-info https://docs.qq.com/sheet/DTG9La1VpbXd6TFhT?tab=000001
 	* 人工标注gpt-3.5-turbo_2.0：spider-test-merged-info https://docs.qq.com/sheet/DTENnVHBZbHZDcHJ3?tab=000001
+	* **整理确认人工标注gpt-3.5-turbo_3.0的spider-train-merged-info集合，用作二分分类器的效果评估集**：spider-train-merged-info-manual-label https://docs.qq.com/sheet/DRnhER3RQeG1YZEdE 
 * 整理并总结error type的定义，重新核对并补充前面人工标记的结果（主要是error type和root cause的分析）
 ### 0.2 llm自动标注剩余的test cases with text to sql logic error
-* auto labelling model的prompt构成
-* 结合上一步设计的prompt，为各种error type设计或选取各5个微调训练样本
-* 微调llm以得到auto labelling model（微调训练集组成部分1：[样本来源](https://docs.qq.com/sheet/DRnRKS25MU3RnUXh1?no_promotion=1&tab=BB08J2)）
-* 简单验证fine-tuned auto labelling model的效果（结合上一步得到的微调llm生成的label结果，重新标注得到微调训练集组成部分2：[spider-train-merged-info-test](https://docs.qq.com/sheet/DRnhER3RQeG1YZEdE?tab=000001)）
-* auto label 剩余的test cases with text to sql logic error
+* PossibleTypeLLM
+	* 简介：LLM先根据Error Types的定义，判断该实例可能属于的所有Error Types。这一做法比单独将实例输入到所有Error Types的BinaryClassifierLLM中进行判断，更经济快速。
+* BinaryClassifierLLM
+	* 微调得到BinaryClassifierLLM的必要性：以 Join Logic Hallucination 类型，提问llm根据定义判断测试用例是否属于该类型，发现未经微调的gpt幻觉现象较为严重（**倾向于回答yes，即便给的例子不是**），具体提问记录可见链接 https://chatgpt.com/share/67ebac8f-0144-8002-b716-cc696695da5d 
+## 2 PossibleTypeLLM
 
-### 0.3 links
-* [手把手教大家用ChatGLM进行模型微调Fine-tuning（二） - 知乎](https://zhuanlan.zhihu.com/p/684299068)
+### 2.1 Prompt构成
+* spider.classify_plus.auto_label_possible_types函数
+* 对于每个实例的error type的判断，输出格式为
+``` python
+[
+{"type": "type string 1", "explanation": "explanation string 1"},
+...
+]
+```
+
+``` python
+# logic error type 定义文件位于路径"FineTuning_TrainData/BinaryClassifier/logic_error_intro_for_possible_type_label_2.txt"
+
+# 组织问题内容  
+question_content = (  
+    f"问题: {question}\n"  
+    f"Schema: {json.dumps(schema, ensure_ascii=False, indent=4)}\n"  
+    f"正确答案: {correct_answer}\n"  
+    f"LLM预测答案: {llm_predict_answer}\n"  
+)
+
+context_issue = [  
+    {  
+        "role": "system",  
+        "content": "You are an expert in analyzing code issues and you will respond in Chinese."  
+    },  
+    {  
+        "role": "user",  
+        "content": (  
+            f"Let's think step by step. 根据logic error type定义，依次思考并判断该text to sql任务的logic error type是否属于每一种type，最终给出所有可能的logic error type类型名称（一个text to sql任务可能涉及多个logic error types）？"  
+            f"Logic error types类型名称:{error_types}\n"  
+            f"Logic error types定义如下：{logic_error_type_intro}\n"  
+            "请严格按照下面json样例的格式输出答案，仅输出符合[]列表的json格式，不要输出任何额外内容："  
+            "[{\"type\": \"{{type string 1}}\", \"explanation\": \"{{explanation string 1}}\"}]\n"  
+            f"{question_content}"  
+        )  
+    }  
+]
+```
+
+### 2.2 效果评估
+* spider.compare_auto_manual_possible_type_label函数
+	* 对于每个实例，对比manual label的error types集合 和 PossibleTypeLLM auto label的error types集合
+	* 对比是否有交集（至少标对一个）
+	* 对比manual label是否为auto label的子集（是否标的不遗漏）
+### 2.3 结果
+* total cnt:77
+* manual label和auto label有交集的cnt: 73
+* manual label是auto label子集的cnt: 47
+* manual label和auto label有交集的比例:0.948051948051948
+* manual label是auto label子集的比例:0.6103896103896104
+## 3 BinaryClassifierLLM
+
+* BinaryClassifierLLM针对10余类错误类型的每一个，微调独立的模型。每个微调模型判断实例是否是否属于该错误类型。
+	* prompt构成
+	* 微调训练集：结合设计的prompt，为每一种error type构造若干个微调训练集（**同时包含是和否的数据**）
+	* 微调模型：微调得到BinaryClassifier模型
+	* 效果评估：验证fine-tuned BinaryClassifier 模型的效果
+### 3.1 Prompt构成
+* spider.classify_plus.fine_tuned_binary_classifier函数
+* prompt构成有几个版本（根据未微调自动binary classifier的标注结果，不断迭代调整），具体见：[二分分类器_binary_classifier_prompt](二分分类器_binary_classifier_prompt.md)
+* 对于每个实例的error type的判断，输出格式为
+``` python
+{"judgement": true, "explanation": "explanation string"}
+```
+### 3.2 微调数据集
+* 针对每一个logic error type，构造BinaryClassifierLLM的微调数据集
+* 微调主要目标：**需要微调以降低fp，未微调模型的回答很不合理，倾向于将正确答案未false的判断为true**
+* 数据集文档如下：
+	* Missing LIMIT Clause：【腾讯文档】MissingLIMITClause https://docs.qq.com/sheet/DRnRKS25MU3RnUXh1
+		``` json
+		"Missing LIMIT Clause": {  
+		    "tp": 2,  
+		    "fn": 1,  
+		    "fp": 0,  
+		    "tn": 16,  
+		    "total": 19,  
+		    "acc": 0.9473684210526315,  
+		    "precision": 1.0,  
+		    "recall": 0.6666666666666666,  
+		    "false_alarm": 0.0,  
+		    "miss_rate": 0.3333333333333333  
+		}
+		```
+	* Schema Misinterpretation Error：本身效果已经很好了，考虑暂时不进行微调
+		``` json
+		"Schema Misinterpretation Error": {  
+		    "tp": 15,  
+		    "fn": 0,  
+		    "fp": 2,  
+		    "tn": 0,  
+		    "total": 17,  
+		    "acc": 0.8823529411764706,  
+		    "precision": 0.8823529411764706,  
+		    "recall": 1.0,  
+		    "false_alarm": 1.0,  
+		    "miss_rate": 0.0  
+		}
+		```
+	* Column Selection Error：【腾讯文档】ColumnSelectionError https://docs.qq.com/sheet/DRnJQaGdXTE5LYm5X
+		``` json
+		"Column Selection Error": {  
+		    "tp": 5,  
+		    "fn": 8,  
+		    "fp": 1,  
+		    "tn": 16,  
+		    "total": 30,  
+		    "acc": 0.7,  
+		    "precision": 0.8333333333333334,  
+		    "recall": 0.38461538461538464,  
+		    "false_alarm": 0.058823529411764705,  
+		    "miss_rate": 0.6153846153846154  
+		}
+		```
+	* Condition Logic Hallucination：
+	* Aggregation Function Misuse：
+	* OrderBy Misuse：
+	* Join Logic Hallucination：
+
+### 3.3 微调模型
+* 微调使用的key：fine_tune_binary_classifier
+### 3.4 效果评估
+* spider.compare_auto_manual_binary_classifier_label函数
+* 评估以下指标：对于所有的possible types的每一个possible type  
+	- P：TP+FN（所有真实为true的）  
+	- TP：possible type属于manual label types；并且possible type被binary classifier 判断为 trueFN：possible type属于manual label types；但是possible type被binary classifier 判断为 false  
+	- N：FP+TN（所有真实为false的）  
+	- FP：possible type不属于manual label types；但是possible type被binary classifier 判断为 trueTN：possible type不属于manual label types；并且possible type被binary classifier 判断为 false  
+	- ACC=(TP+TN)/(TP+TN+FP+FN)  
+	- precision=TP/(TP+FP)  
+	- recall=TPR=TP/(TP+FN)=TP/P  
+	- false alarm=FPR=FP/(FP+TN)=FP/N  
+	- miss rate=FNR=FN/(TP+FN)=FN/P
+### 3.5 结果
+* 未微调自动标注模型的准确率统计
+* 未微调自动标注模型的准确率conclusion：**召回率还可以，但误报极多**，符合前面提到的“未经微调的gpt幻觉现象较为严重（倾向于回答yes，即便给的例子不是）”的直观感受
+	* 微调得到BinaryClassifierLLM的必要性：以 Join Logic Hallucination 类型，提问llm根据定义判断测试用例是否属于该类型，发现未经微调的gpt幻觉现象较为严重（倾向于回答yes，即便给的例子不是），具体提问记录可见链接 https://chatgpt.com/share/67ebac8f-0144-8002-b716-cc696695da5d 
+		* 不存在当前分类器的logic error type，但是大模型分析出存在其他logic error，故将false判断为true
+```json
+"merge": {  
+    "tp": 186,  
+    "fn": 6,  
+    "fp": 238,  
+    "tn": 14,  
+    "total": 222,  
+    "acc": 0.45045045045045046,  
+    "precision": 0.4386792452830189,  
+    "recall": 0.96875,  
+    "false_alarm": 0.9444444444444444,  
+    "miss_rate": 0.03125  
+}
+```
+* 微调后自动标注模型的准确率统计
+
+
 ## 1 Logic Error Type Enumeration
 
 ```
@@ -709,92 +863,5 @@ Others
 
 
 
-## 2 Auto Labelling Prompt
-
-在前面classify_plus.py文件的基础上进行修改
-``` python
-# 调用 GPT-4o-mini 分析该logic error type  
-context_issue = [  
-    {"role": "system", "content": "You are an expert in analyzing code issues and you will respond in Chinese."},  
-    {"role": "user", "content": f"该text to sql 任务的logic error type是什么？请以下面json格式给出type和简单解释：{{\"type\":"", \"explanation\":""}}。\n{question_content}"}  
-]
-```
-
-## 3 Fine-tuning Training Dataset
-* 结合上一步设计的Auto Labelling Prompt，为1中的每一种logic error type设计相应的微调训练样本（暂每一种取3-5个）。其中包含部分一个样例符合多个error type的。
-* 微调训练样本部分取自人工标注的，部分取自llm编写的样例。
-* 包含type和简单解释的数据表格如下：【腾讯文档】Fine-tuning Training Dataset https://docs.qq.com/sheet/DRnRKS25MU3RnUXh1?tab=BB08J2
-
-* 智谱也没钱了
-![[Pasted image 20250323151444.png]]
-
-* logic_error_type_intro
-``` txt
-Operator Misuse：涉及 比较运算符（Comparison Operators）、逻辑运算符（Logical Operators）或数学运算符（Arithmetic Operators） 的不当使用，使得查询逻辑偏离自然语言查询的正确含义。
-
-Missing LIMIT Clause:该错误通常与 `LIMIT` 语句的使用不当有关，可能由于 `LIMIT` 缺失（查询要求选取最大或最小值等等）、语法错误、不合理的参数、或者在不支持 `LIMIT` 的 SQL 语句中使用 `LIMIT`，导致查询逻辑错误。
-
-Join Logic Hallucination:指的是模型在生成 SQL 查询时对表连接（JOIN）逻辑的错误推理，导致查询结构不合理、连接方式错误或查询结果偏离预期。这种错误通常发生在模型错误地创建、遗漏或误用表连接。
-
-Violating Value Specification:指 Text-to-SQL 模型在生成 SQL 查询时，对字段值的格式、语义或实际存储内容理解错误，导致生成的查询条件值与数据库实际存储值不一致，从而返回空结果或错误结果。其本质是模型未能准确理解自然语言描述与数据库字段值之间的映射关系。这种错误通常发生在 WHERE 子句、INSERT 语句或 GROUP BY 条件中。
-
-Schema Misinterpretation Error:指的是 模型在解析数据库模式（Schema）时，错误地理解表、列、主键、外键、数据类型或表之间的关系，导致生成的 SQL 查询结构错误或查询结果不符合预期。
-
-Column Selection Error:指的是 SQL 查询在 `SELECT` 子句或查询条件中，错误地选择了列、遗漏列、选择多余列，导致查询结果不符合用户意图或查询逻辑不成立。
-
-Condition Logic Hallucination:指在自然语言到 SQL 查询的转换过程中，模型错误地生成与原始文本无关、覆盖不完全、覆盖超出或矛盾的条件逻辑。
-
-Aggregation Function Misuse:聚合函数误用（Aggregation Function Misuse）指的是 SQL 查询中错误地使用了聚合函数（如 `SUM()`、`COUNT()`、`AVG()`、`MAX()`、`MIN()`），导致查询结果不符合预期。
-
-Missing Distinct Error:指 SQL 查询缺少 `DISTINCT` 关键字，导致查询结果包含重复数据，而用户实际期望的是唯一值。该错误通常出现在查询要求 唯一实体（如不同类别、唯一名称等）时，但 SQL 查询未正确去重，从而返回了冗余行。
-
-OrderBy Error:`OrderBy Error` 指 SQL 查询中的 `ORDER BY` 语句未能正确执行排序，导致查询结果的顺序与用户意图不符。
-
-GroupBy Misuse:`GroupBy Misuse` 指 SQL 查询在使用 `GROUP BY` 进行分组时，未能正确匹配查询需求，导致错误的聚合行为或查询结果不符合用户期望。
-
-Others:
-```
-## 备注（gpt-3.5-turbo_3.0）
-
-### 正确答案有误
-spider数据集中有很多错误的gold sql。
-### 一个问题可对应多个解
-
-在44中，question为Please show the different statuses, ordered by the number of cities that have each.该问题未指明ordered是升序还是降序（大模型默认降序）。
-### database data 错误
-在64中，question为List the id of students who attended some courses?
-得到的predict sql逻辑上是正确的：
-``` sql
-SELECT student_id FROM Students WHERE student_id IN (     SELECT student_id     FROM Student_Course_Attendance );
-```
-
-对应的standard sql是：
-``` sql
-SELECT student_id FROM student_course_attendance
-```
-
-predict sql之所以被判断为错误的，问题出在database data上面，Student_Course_Attendance中的student_id是Students的student_id的超集（也就是说Student_Course_Attendance表中存在Students表里没有的id）。
-
-### 同义question->sql
-在标记过程中，发现了很多同义question组，其text to sql的predict sql结果大部分相同，logic error type也很相似。
-
-### 无伤大雅的多余列
-在190，192中，标准答案希望查询语句只返回station name, longitude and average duration of trips，但predict sql查询结果多返回了station id。这一logic error不算严重，question没有明确指明返回列时，这种回答也比较正确。
-
-### database schema的实时性数据查询（存疑）
-* 在277，278，285，289中，标准答案对于follower这种动态数据的查询需要将用户信息表user_profiles 和关注表follows进行join表连接（以防止user_profiles表中followers字段的不准确）。而predict sql普遍性忽略这一点，但是这一点有没有在database schema中特殊强调。
-* 但是在291中，标准答案又和277等的风格不一样了，直接从 `user_profiles` 表中按 `followers` 字段排序，并取 `followers` 最少的用户。
-
-### 关于question中的单复数和sql中的limit 1问题
-在163，164，319，320等等中，问题中要查询的是单数，故标准答案中添加了limit 1。但predict sql经常忽略单数这一点。
 
 
----
-## Others
-
-#### 1.1.10 Subquery logic error（子查询逻辑错误，删了吧）
-
-**子查询逻辑错误（Subquery Logic Error）** 指的是 SQL 语句在使用子查询（`SUBQUERY`）时，逻辑上不符合查询目标，导致错误的结果或空结果集。该错误通常发生在 **`IN`、`EXISTS`、`NOT IN`** 等子查询条件使用不当的情况下，具体表现为：
-- **错误地筛选了不相关的数据**，导致返回的数据不正确。
-- **遗漏应当包含的数据**，导致返回的数据为空（空集）。
-- **子查询的粒度（granularity）与外层查询不匹配**，导致查询逻辑错误。

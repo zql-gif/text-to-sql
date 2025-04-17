@@ -81,7 +81,7 @@ context_issue = [
 * 针对每一个logic error type，构造BinaryClassifierLLM的微调数据集
 * 微调主要目标：**需要微调以降低fp，未微调模型的回答很不合理，倾向于将正确答案未false的判断为true**
 * **微调数据集的构造准则**
-	* **CoT：question意图+分析LLM预测答案相较于标准答案的不同（指定error type方面的不同，分析需要指定具体到哪个子句）+ 分析正确的查询思路 +下结论并给出judgement值- “这属于Condition Logic Hallucination中的无中生有条件。因此，judgement为true。” **
+	* **CoT：question意图+分析LLM预测答案相较于标准答案的不同（指定error type方面的不同，分析需要指定具体到哪个子句）+ 分析正确的查询思路 +下结论并给出judgement值- 【这属于Condition Logic Hallucination中的无中生有条件。因此，judgement为true】。**
 	* 针对每一种error type的细分子分类，需要都设计一些微调示例
 	* judgement为true和false的实例可以分别从判断为true positive和判断为false positive（这种进行修改成为judgement为false的微调实例）中，进行仿写形成微调示例
 * 数据集文档如下：

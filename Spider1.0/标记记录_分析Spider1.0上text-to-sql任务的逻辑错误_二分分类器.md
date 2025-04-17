@@ -80,22 +80,28 @@ context_issue = [
 ### 3.2 微调数据集
 * 针对每一个logic error type，构造BinaryClassifierLLM的微调数据集
 * 微调主要目标：**需要微调以降低fp，未微调模型的回答很不合理，倾向于将正确答案未false的判断为true**
+* **微调数据集的构造准则**
+	* **CoT：question意图+分析LLM预测答案相较于标准答案的不同（指定error type方面的不同，分析需要指定具体到哪个子句）+ 分析正确的查询思路 +下结论并给出judgement值- “这属于Condition Logic Hallucination中的无中生有条件。因此，judgement为true。” **
+	* 针对每一种error type的细分子分类，需要都设计一些微调示例
+	* judgement为true和false的实例可以分别从判断为true positive和判断为false positive（这种进行修改成为judgement为false的微调实例）中，进行仿写形成微调示例
 * 数据集文档如下：
-	* Missing LIMIT Clause：【腾讯文档】MissingLIMITClause https://docs.qq.com/sheet/DRnRKS25MU3RnUXh1
+	* Operator Misuse：暂不
+	* Missing LIMIT Clause：【腾讯文档】MissingLIMITClause-2.0 https://docs.qq.com/sheet/DRmR1QmV3Z25YcFFU
 		``` json
 		"Missing LIMIT Clause": {  
-		    "tp": 2,  
-		    "fn": 1,  
-		    "fp": 0,  
-		    "tn": 16,  
+		    "tp": 3,  
+		    "fn": 0,  
+		    "fp": 1,  
+		    "tn": 15,  
 		    "total": 19,  
 		    "acc": 0.9473684210526315,  
-		    "precision": 1.0,  
-		    "recall": 0.6666666666666666,  
-		    "false_alarm": 0.0,  
-		    "miss_rate": 0.3333333333333333  
+		    "precision": 0.75,  
+		    "recall": 1.0,  
+		    "false_alarm": 0.0625,  
+		    "miss_rate": 0.0  
 		}
 		```
+	* Violating Value Specification：暂不
 	* Schema Misinterpretation Error：本身效果已经很好了，考虑暂时不进行微调
 		``` json
 		"Schema Misinterpretation Error": {  
@@ -111,24 +117,26 @@ context_issue = [
 		    "miss_rate": 0.0  
 		}
 		```
-	* Column Selection Error：【腾讯文档】ColumnSelectionError https://docs.qq.com/sheet/DRnJQaGdXTE5LYm5X
+	* Column Selection Error：【腾讯文档】ColumnSelectionError-3.0 https://docs.qq.com/sheet/DRmZJaEhqVUJGckx0
 		``` json
 		"Column Selection Error": {  
-		    "tp": 5,  
-		    "fn": 8,  
-		    "fp": 1,  
+		    "tp": 10,  
+		    "fn": 2,  
+		    "fp": 2,  
 		    "tn": 16,  
 		    "total": 30,  
-		    "acc": 0.7,  
+		    "acc": 0.8666666666666667,  
 		    "precision": 0.8333333333333334,  
-		    "recall": 0.38461538461538464,  
-		    "false_alarm": 0.058823529411764705,  
-		    "miss_rate": 0.6153846153846154  
+		    "recall": 0.8333333333333334,  
+		    "false_alarm": 0.1111111111111111,  
+		    "miss_rate": 0.16666666666666666  
 		}
 		```
 	* Condition Logic Hallucination：
 	* Aggregation Function Misuse：
-	* OrderBy Misuse：
+	* Missing Distinct Error：暂不
+	* OrderBy Misuse：暂不
+	* GroupBy Misuse：暂不
 	* Join Logic Hallucination：
 
 ### 3.3 微调模型
@@ -566,8 +574,7 @@ Others
    *例*：用户要求 "显示销售额超过 1 万的订单"，模型生成 `WHERE amount > 10000 AND region = 'East'`（凭空添加 `region` 限制）。  
 2. 条件逻辑矛盾：生成的条件与用户意图冲突。  
    *例*：用户要求 "排除已取消的订单"，模型生成 `WHERE status = 'cancelled'`（逻辑反向）。
-3. 条件覆盖不完全（Incomplete Condition Filtering）：指的是 SQL 查询中的筛选条件没有正确覆盖所有可能的情况，导致部分不符合预期的结果被包含或排除。常见于：
-
+3. 条件覆盖不完全（Incomplete Condition Filtering）：指的是 SQL 查询中的筛选条件没有正确覆盖所有可能的情况，导致部分不符合预期的结果被包含或排除。
 
 
 下面是一些例子：

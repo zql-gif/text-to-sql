@@ -81,7 +81,8 @@ context_issue = [
 * 针对每一个logic error type，构造BinaryClassifierLLM的微调数据集
 * 微调主要目标：**需要微调以降低fp，未微调模型的回答很不合理，倾向于将正确答案未false的判断为true**
 * **微调数据集的构造准则**
-	* **CoT：question意图+分析LLM预测答案相较于标准答案的不同（指定error type方面的不同，分析需要指定具体到哪个子句）+ 分析正确的查询思路 +下结论并给出judgement值- 【这属于Condition Logic Hallucination中的无中生有条件。因此，judgement为true】。**
+	* **CoT for true：question意图+分析LLM预测答案相较于标准答案的不同（指定error type方面的不同，分析需要指定具体到哪个子句）+ 分析正确的查询思路 +下结论并给出judgement值- 【这属于Condition Logic Hallucination中的无中生有条件。因此，judgement为true】。**
+	* **CoT for false：question意图+分析LLM预测答案相较于标准答案的不同+ 分析正确的查询思路 + 分析不存在指定error type的理由+ 下结论并给出judgement值- 【不属于Condition Logic Hallucination。因此，judgement为false】。**
 	* 针对每一种error type的细分子分类，需要都设计一些微调示例
 	* judgement为true和false的实例可以分别从判断为true positive和判断为false positive（这种进行修改成为judgement为false的微调实例）中，进行仿写形成微调示例
 * 数据集文档如下：
@@ -132,7 +133,21 @@ context_issue = [
 		    "miss_rate": 0.16666666666666666  
 		}
 		```
-	* Condition Logic Hallucination：
+	* Condition Logic Hallucination：【腾讯文档】ConditionLogicHallucination-4.0 https://docs.qq.com/sheet/DRmNFaVZDU3NBZm9O
+		```json
+		"Condition Logic Hallucination": {  
+		    "tp": 21,  
+		    "fn": 10,  
+		    "fp": 2,  
+		    "tn": 8,  
+		    "total": 41,  
+		    "acc": 0.7073170731707317,  
+		    "precision": 0.9130434782608695,  
+		    "recall": 0.6774193548387096,  
+		    "false_alarm": 0.2,  
+		    "miss_rate": 0.3225806451612903  
+		}
+		```
 	* Aggregation Function Misuse：
 	* Missing Distinct Error：暂不
 	* OrderBy Misuse：暂不
@@ -160,16 +175,18 @@ context_issue = [
 		* 不存在当前分类器的logic error type，但是大模型分析出存在其他logic error，故将false判断为true
 ```json
 "merge": {  
-    "tp": 186,  
-    "fn": 6,  
-    "fp": 238,  
-    "tn": 14,  
+    "tp": 148,  
+    "fn": 68,  
+    "fp": 194,  
+    "tn": 34,  
     "total": 222,  
-    "acc": 0.45045045045045046,  
-    "precision": 0.4386792452830189,  
-    "recall": 0.96875,  
-    "false_alarm": 0.9444444444444444,  
-    "miss_rate": 0.03125  
+    "acc": 0.4099099099099099,  
+    "precision": 0.4327485380116959,  
+    "recall": 0.6851851851851852,  
+    "false_alarm": 0.8508771929824561,  
+    "miss_rate": 0.3148148148148148,  
+    "label_overlap": 0.7662337662337663,  
+    "manual_label_coverage": 0.36363636363636365  
 }
 ```
 * 微调后自动标注模型的准确率统计
@@ -569,13 +586,14 @@ Others
 
 
 ### 1.7 Condition Logic Hallucination（条件逻辑幻觉）
-指在自然语言到 SQL 查询的转换过程中，模型错误地生成与原始文本无关、覆盖不完全、覆盖超出或矛盾的条件逻辑。这种错误表现为：
+指的是生成的 SQL 查询在 WHERE，JOIN ... ON，HAVING ，CASE WHEN THEN，EXISTS / NOT EXISTS等等条件子句中引入了不符合原始问题语义的条件逻辑。这种错误会导致 SQL 查询逻辑偏离问题意图，返回不正确的结果。这种错误常常表现为：
+
 1. 无中生有条件：模型添加了用户未提及的过滤条件。  
    *例*：用户要求 "显示销售额超过 1 万的订单"，模型生成 `WHERE amount > 10000 AND region = 'East'`（凭空添加 `region` 限制）。  
 2. 条件逻辑矛盾：生成的条件与用户意图冲突。  
    *例*：用户要求 "排除已取消的订单"，模型生成 `WHERE status = 'cancelled'`（逻辑反向）。
 3. 条件覆盖不完全（Incomplete Condition Filtering）：指的是 SQL 查询中的筛选条件没有正确覆盖所有可能的情况，导致部分不符合预期的结果被包含或排除。
-
+4. 条件限制有逻辑错误：条件约束存在取值错误，范围约束错误，约束条件不符合question要求等条件本身的逻辑错误。
 
 下面是一些例子：
 1. 无中生有条件（Spurious Condition Generation）

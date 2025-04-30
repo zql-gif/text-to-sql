@@ -8,21 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "df683454b5739675",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Records/2025.04.14 - 2025.04.20.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "2025.04.14 - 2025.04.20"
-            }
-          },
-          {
-            "id": "08e659d87d5f990a",
+            "id": "0b6c418c58f31e1e",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -34,9 +20,22 @@
               "icon": "lucide-file",
               "title": "标记记录_分析Spider1.0上text-to-sql任务的逻辑错误_二分分类器"
             }
+          },
+          {
+            "id": "7095214b58d87e63",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "论文笔记/note-Automated Program Refinement_Guide and Verify Code  Large Language Model with Refinement Calculus.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "note-Automated Program Refinement_Guide and Verify Code  Large Language Model with Refinement Calculus"
+            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -178,19 +177,25 @@
       "command-palette:打开命令面板": false
     }
   },
-  "active": "08e659d87d5f990a",
+  "active": "0b6c418c58f31e1e",
   "lastOpenFiles": [
-    "Records/2025.04.14 - 2025.04.20.md",
-    "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误_n选m分类器.md",
+    "Records/2024.12.09-2024.12.15.md",
     "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误_二分分类器.md",
+    "Records/2025.04.21 - 2025.04.27.md",
+    "Records/2025.04.14 - 2025.04.20.md",
+    "论文笔记/note-Automated Program Refinement_Guide and Verify Code  Large Language Model with Refinement Calculus.md",
+    "论文笔记/zh-Automated Program Refinement_Guide and Verify Code  Large Language Model with Refinement Calculus.md",
+    "论文笔记/小组会分享_Prompt-to-SQL Injections in LLM-Integrated Web Applications_Risks and Defenses.md",
+    "Records/2025.03.24 - 2025.04.10.md",
+    "Records/2025.03.17 - 2025.03.23.md",
+    "attachment/Pasted image 20250422170304.png",
+    "attachment/Pasted image 20250422145025.png",
+    "Spider1.0/标记记录_分析Spider1.0上text-to-sql任务的逻辑错误_n选m分类器.md",
     "Spider1.0/二分分类器_binary_classifier_prompt.md",
     "attachment/Pasted image 20250416101233.png",
-    "Records/2025.03.24 - 2025.04.10.md",
     "Spider1.0/实验记录_在Spider1.0上简单测试LLM的text-to-sql能力2.0.md",
-    "Records/2025.03.17 - 2025.03.23.md",
     "Spider1.0/实验记录_简单测试RawLLM的text-to-sql能力.md",
     "BIRD/实验记录_在BIRD上简单测试LLM的text-to-sql能力2.0.md",
-    "论文笔记/小组会分享_Prompt-to-SQL Injections in LLM-Integrated Web Applications_Risks and Defenses.md",
     "论文笔记/Prompt-to-SQL Injections in LLM-Integrated Web Applications_Risks and Defenses.md",
     "attachment/Pasted image 20250326161624.png",
     "attachment/Pasted image 20250326160441.png",
@@ -199,8 +204,6 @@
     "attachment/Pasted image 20250325231522.png",
     "attachment/Pasted image 20250325224301.png",
     "attachment/Pasted image 20250325224014.png",
-    "attachment/Pasted image 20250325201157.png",
-    "attachment/Pasted image 20250325162838.png",
     "Records/2025.03.10 - 2025.03.16.md",
     "Records/2025.02.24 - 2025.03.09.md",
     "MetamorphicTesting/MetamorphicTestingDefinition.md",
@@ -213,11 +216,8 @@
     "BIRD/BIRD论文.md",
     "BIRD",
     "ExperimentSetup.md",
-    "Others/python环境导出.md",
     "Others",
-    "Deepseek/Deepseek调用说明.md",
     "Deepseek",
-    "().md",
     "Spider1",
     "text-to-sql",
     "hhh",

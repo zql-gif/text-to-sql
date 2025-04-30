@@ -86,7 +86,21 @@ context_issue = [
 	* 针对每一种error type的细分子分类，需要都设计一些微调示例
 	* judgement为true和false的实例可以分别从判断为true positive和判断为false positive（这种进行修改成为judgement为false的微调实例）中，进行仿写形成微调示例
 * 数据集文档如下：
-	* Operator Misuse：暂不
+	* Operator Misuse：【腾讯文档】OperatorMisuse https://docs.qq.com/sheet/DRnp3ZXpLdktkSG1X
+		``` json
+		"Operator Misuse": {  
+		    "tp": 2,  
+		    "fn": 0,  
+		    "fp": 0,  
+		    "tn": 0,  
+		    "total": 2,  
+		    "acc": 1.0,  
+		    "precision": 1.0,  
+		    "recall": 1.0,  
+		    "false_alarm": 0,  
+		    "miss_rate": 0.0  
+		}
+		```
 	* Missing LIMIT Clause：【腾讯文档】MissingLIMITClause-2.0 https://docs.qq.com/sheet/DRmR1QmV3Z25YcFFU
 		``` json
 		"Missing LIMIT Clause": {  
@@ -102,8 +116,22 @@ context_issue = [
 		    "miss_rate": 0.0  
 		}
 		```
-	* Violating Value Specification：暂不
-	* Schema Misinterpretation Error：本身效果已经很好了，考虑暂时不进行微调
+	* Violating Value Specification：【腾讯文档】ViolatingValueSpecification https://docs.qq.com/sheet/DRkFEYnFaUWVUYmZN
+	``` json
+	"Violating Value Specification": {  
+	    "tp": 5,  
+	    "fn": 0,  
+	    "fp": 2,  
+	    "tn": 0,  
+	    "total": 7,  
+	    "acc": 0.7142857142857143,  
+	    "precision": 0.7142857142857143,  
+	    "recall": 1.0,  
+	    "false_alarm": 1.0,  
+	    "miss_rate": 0.0  
+	}
+	```
+	* Schema Misinterpretation Error：暂不，不微调的效果已经很好了
 		``` json
 		"Schema Misinterpretation Error": {  
 		    "tp": 15,  
@@ -148,11 +176,77 @@ context_issue = [
 		    "miss_rate": 0.3225806451612903  
 		}
 		```
-	* Aggregation Function Misuse：
-	* Missing Distinct Error：暂不
+	* Aggregation Function Misuse：【腾讯文档】AggregationFunctionMisuse https://docs.qq.com/sheet/DRnVIU1habmV1dEdt
+		``` json
+		"Aggregation Function Misuse": {  
+		    "tp": 3,  
+		    "fn": 0,  
+		    "fp": 5,  
+		    "tn": 18,  
+		    "total": 26,  
+		    "acc": 0.8076923076923077,  
+		    "precision": 0.375,  
+		    "recall": 1.0,  
+		    "false_alarm": 0.21739130434782608,  
+		    "miss_rate": 0.0  
+		}
+		```
+	* Missing Distinct Error：暂不，不微调的效果已经很好了
+		``` json
+		"Missing LIMIT Clause": {  
+		    "tp": 3,  
+		    "fn": 0,  
+		    "fp": 1,  
+		    "tn": 15,  
+		    "total": 19,  
+		    "acc": 0.9473684210526315,  
+		    "precision": 0.75,  
+		    "recall": 1.0,  
+		    "false_alarm": 0.0625,  
+		    "miss_rate": 0.0  
+		}
+		```
 	* OrderBy Misuse：暂不
 	* GroupBy Misuse：暂不
-	* Join Logic Hallucination：
+	* Join Logic Hallucination：【腾讯文档】JoinLogicHallucination https://docs.qq.com/sheet/DRmRoZVVCR1Z2WFZ0
+		``` json
+		"Join Logic Hallucination,join-logic-hallucination-1.0": {  
+		    "tp": 20,  
+		    "fn": 4,  
+		    "fp": 4,  
+		    "tn": 16,  
+		    "total": 44,  
+		    "acc": 0.8181818181818182,  
+		    "precision": 0.8333333333333334,  
+		    "recall": 0.8333333333333334,  
+		    "false_alarm": 0.2,  
+		    "miss_rate": 0.16666666666666666  
+		},
+		"Join Logic Hallucination,join-logic-hallucination-2.0": {  
+		    "tp": 4,  
+		    "fn": 20,  
+		    "fp": 0,  
+		    "tn": 20,  
+		    "total": 44,  
+		    "acc": 0.5454545454545454,  
+		    "precision": 1.0,  
+		    "recall": 0.16666666666666666,  
+		    "false_alarm": 0.0,  
+		    "miss_rate": 0.8333333333333334  
+	    },
+		"Join Logic Hallucination,join-logic-hallucination-3.0": {  
+		    "tp": 11,  
+		    "fn": 13,  
+		    "fp": 0,  
+		    "tn": 20,  
+		    "total": 44,  
+		    "acc": 0.7045454545454546,  
+		    "precision": 1.0,  
+		    "recall": 0.4583333333333333,  
+		    "false_alarm": 0.0,  
+		    "miss_rate": 0.5416666666666666  
+		}
+		```
 
 ### 3.3 微调模型
 * 微调使用的key：fine_tune_binary_classifier
@@ -169,29 +263,72 @@ context_issue = [
 	- false alarm=FPR=FP/(FP+TN)=FP/N  
 	- miss rate=FNR=FN/(TP+FN)=FN/P
 ### 3.5 结果
-* 未微调自动标注模型的准确率统计
 * 未微调自动标注模型的准确率conclusion：**召回率还可以，但误报极多**，符合前面提到的“未经微调的gpt幻觉现象较为严重（倾向于回答yes，即便给的例子不是）”的直观感受
 	* 微调得到BinaryClassifierLLM的必要性：以 Join Logic Hallucination 类型，提问llm根据定义判断测试用例是否属于该类型，发现未经微调的gpt幻觉现象较为严重（倾向于回答yes，即便给的例子不是），具体提问记录可见链接 https://chatgpt.com/share/67ebac8f-0144-8002-b716-cc696695da5d 
-		* 不存在当前分类器的logic error type，但是大模型分析出存在其他logic error，故将false判断为true
-```json
-"merge": {  
-    "tp": 148,  
-    "fn": 68,  
-    "fp": 194,  
-    "tn": 34,  
-    "total": 222,  
-    "acc": 0.4099099099099099,  
-    "precision": 0.4327485380116959,  
-    "recall": 0.6851851851851852,  
-    "false_alarm": 0.8508771929824561,  
-    "miss_rate": 0.3148148148148148,  
-    "label_overlap": 0.7662337662337663,  
-    "manual_label_coverage": 0.36363636363636365  
+* 微调前后自动标注模型的准确率统计
+	* gpt-4o-binary-type-auto-1.0/2.0：gpt-4o-mini
+		```json
+		"merge": {  
+		    "tp": 158,  
+		    "fn": 72,  
+		    "fp": 184,  
+		    "tn": 30,  
+		    "total": 444,  
+		    "acc": 0.42342342342342343,  
+		    "precision": 0.4619883040935672,  
+		    "recall": 0.6869565217391305,  
+		    "false_alarm": 0.8598130841121495,  
+		    "miss_rate": 0.3130434782608696,  
+		    "label_overlap": 0.7922077922077922,  
+		    "manual_label_coverage": 0.36363636363636365  
+		}
+		```
+	* gpt-4o-binary-type-auto-3.0：微调后
+		```json
+		"merge": {  
+		    "tp": 196,  
+		    "fn": 34,  
+		    "fp": 66,  
+		    "tn": 148,  
+		    "total": 444,  
+		    "acc": 0.7747747747747747,  
+		    "precision": 0.7480916030534351,  
+		    "recall": 0.8521739130434782,  
+		    "false_alarm": 0.308411214953271,  
+		    "miss_rate": 0.14782608695652175,  
+		    "label_overlap": 0.8571428571428571,  
+		    "manual_label_coverage": 0.45454545454545453  
+		}
+		```
+* 微调后自动标注了1082条text to sql任务中的错误实例，标记的logic error types数目统计结果如下：
+``` json
+{  
+    "Operator Misuse": 34,  
+    "Operator Misuse(percent)": 0.02711323763955343,  
+    "Missing LIMIT Clause": 44,  
+    "Missing LIMIT Clause(percent)": 0.03508771929824561,  
+    "Violating Value Specification": 87,  
+    "Violating Value Specification(percent)": 0.06937799043062201,  
+    "Schema Misinterpretation Error": 283,  
+    "Schema Misinterpretation Error(percent)": 0.22567783094098884,  
+    "Column Selection Error": 108,  
+    "Column Selection Error(percent)": 0.0861244019138756,  
+    "Condition Logic Hallucination": 127,  
+    "Condition Logic Hallucination(percent)": 0.10127591706539076,  
+    "Aggregation Function Misuse": 29,  
+    "Aggregation Function Misuse(percent)": 0.023125996810207338,  
+    "Missing Distinct Error": 104,  
+    "Missing Distinct Error(percent)": 0.08293460925039872,  
+    "OrderBy Misuse": 66,  
+    "OrderBy Misuse(percent)": 0.05263157894736842,  
+    "GroupBy Misuse": 107,  
+    "GroupBy Misuse(percent)": 0.08532695374800638,  
+    "Join Logic Hallucination": 265,  
+    "Join Logic Hallucination(percent)": 0.2113237639553429,  
+    "Total Type Count": 1254,  
+    "Total Type Count(percent)": 1.0  
 }
 ```
-* 微调后自动标注模型的准确率统计
-
-
 ## 1 Logic Error Type Enumeration
 
 ```
